@@ -1,0 +1,51 @@
+
+# Ignore backup copies files
+*~
+
+# Ignore stale lock files 
+\#*#
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore local environment
+/env
+
+# Ignore temp and touch files
+*.temp
+*.done
+
+# Ignore local snakemake (include .snakemake/conda/)
+.snakemake
+
+# Ignore (raw) reads (.gz commented because test_data fastq files)
+*.fastq
+#*.fastq.gz
+
+# Ignore fasta indexes
+*.fai
+
+# Ignore resources as indexes and reads directory
+/resources/indexes
+/resources/reads/*.fastq.gz
+!/resources/data_test/
+
+# Ignore bt2 indexes
+*.bt2
+*.bt2l
+
+# Ignore baw indexes
+*.amb
+*.ann
+*.bwt
+*.pac
+*.sa
+
+# Ignore results
+/results
+/archives
+*.tar.gz
+
+# Ignore test scripts
+*.sh

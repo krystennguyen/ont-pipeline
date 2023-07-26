@@ -1,0 +1,12 @@
+name: gawk
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - gawk=5.1.0=h8a989fb_0
+  - gettext=0.21.1=h8a4c099_0
+  - libiconv=1.17=hac89ed1_0
+  - ncurses=6.4=hf0c8a7f_0
+  - readline=8.2=h9e318b2_1
+prefix: /Users/krysten/miniconda3/envs/gawk

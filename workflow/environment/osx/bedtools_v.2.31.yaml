@@ -1,0 +1,12 @@
+name: bedtools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bedtools=2.31.0=h6372da2_2
+  - bzip2=1.0.8=h0d85af4_4
+  - libcxx=16.0.6=hd57cbcb_0
+  - libzlib=1.2.13=h8a1eda9_5
+  - xz=5.2.6=h775f41a_0
+prefix: /Users/krysten/miniconda3/envs/bedtools

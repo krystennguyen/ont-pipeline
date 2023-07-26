@@ -1,0 +1,49 @@
+###############################################################################
+### RESOURCES ###
+#################
+resources:
+  cpus: "8" # Set maximum cpus usage (for multithreading, default: "8") [INT]
+  ram: "16" # Set maximum memory usage (in Gb, default: "16") [INT]
+  tmp_dir: "$TMPDIR" # Temporary directory (default: "$TMPDIR")
+###############################################################################
+### FASTQ-SCREEN ###
+####################
+fastq_screen:
+  config: "configuration/fastq-screen.conf" # Path to the fastq-screen configuration file
+  subset: "10000" # Don't use whole sequences, but a subset reads (default: "10000") [INT] (0=all)
+###############################################################################
+### CONSENSUS ###
+####################
+consensus:
+  min_cov: # Minimum coverage, mask lower regions with "N" (default: "30") [INT]
+  # Available options (not exhaustive), choose one:
+    - '30'                         # 30 X : AFROSCREEN SARS-CoV-2 Illumina amplicons sequencing (default)
+    #- '40'
+    #- '50'
+    #- '60'
+    #- 'Add_your_minimum_coverage' # Custom 
+  reference: # Your reference, in fasta format (default: SARS-CoV-2_Wuhan_MN-908947-3)
+    # Available options (not exhaustive), choose one:
+    - "SARS-CoV-2_Wuhan_MN-908947-3" # SARS-CoV-2 (Nextclade and Pangolin)
+    #- 'Monkeypox-virus_Zaire_AF-380138-1'  # Monkeypox  (Nextclade and Pangolin)
+    #- 'Monkeypox-virus_UK_MT-903345-1'     # Monkeypox  (Nextclade and Pangolin)
+    #- 'Swinepox-virus_India_MW-036632-1'   # Swinepox   (Nextclade)
+    #- 'Ebola-virus_Zaire_AF-272001-1'      # Ebola      (na)
+    #- 'Ebola-virus_Sudan_MH-121162-1'      # Ebola      (na)
+    #- 'Nipah-virus_Malaysia_AJ-564622-1'   # Nipah      (na)
+    #- 'HIV-1_HXB2_K-03455-1'               # HIV-1      (na)
+    #- 'Human-herpesvirus-5_NC-006273-2'    # Herpes     (na)
+    #- 'Human-herpesvirus-3_NC-001348-1'    # Varicella  (na)
+    #- 'Add_your_favorite_genome_ref'       # Custom     (na)
+  path: "resources/genomes/" # Path to genomes references (default)
+
+conda:
+  frontend:
+    - mamba
+  osx:
+    pychopper: "../environment/osx/pychopper.yaml"
+    nanoplot: "./environment/osx/nanoplot.yaml"
+    minimap2: "../environment/osx/minimap2_v.2.26.yaml"
+    samtools: "../environment/osx/samtools_v.1.17.yaml"
+    bedtools: "../environment/osx/bedtools_v.2.31.yaml"
+    gawk: "../environment/osx/gawk_v.5.1.yaml"

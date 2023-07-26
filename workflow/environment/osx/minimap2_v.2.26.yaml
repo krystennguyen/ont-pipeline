@@ -1,0 +1,28 @@
+name: minimap2_v.2.26
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - ca-certificates=2023.7.22=h8857fd0_0
+  - k8=0.2.5=hdf58011_4
+  - libcxx=16.0.6=hd57cbcb_0
+  - libffi=3.2.1=1
+  - libsqlite=3.42.0=h58db7d2_0
+  - libzlib=1.2.13=h8a1eda9_5
+  - mappy=2.26=py39h7d4dbad_0
+  - minimap2=2.26=h45fc8d7_1
+  - ncurses=6.4=hf0c8a7f_0
+  - openssl=1.1.1u=h8a1eda9_0
+  - pip=23.2.1=pyhd8ed1ab_0
+  - python=3.9.0=ha017127_4_cpython
+  - python_abi=3.9=3_cp39
+  - readline=8.2=h9e318b2_1
+  - setuptools=68.0.0=pyhd8ed1ab_0
+  - sqlite=3.42.0=h2b0dec6_0
+  - tk=8.6.12=h5dbffcc_0
+  - tzdata=2023c=h71feb2d_0
+  - wheel=0.41.0=pyhd8ed1ab_0
+  - xz=5.2.6=h775f41a_0
+  - zlib=1.2.13=h8a1eda9_5
+prefix: /Users/krysten/miniconda3/envs/minimap2
