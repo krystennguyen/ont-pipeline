@@ -42,7 +42,7 @@ conda:
     - mamba
   osx:
     pychopper: "../environment/osx/pychopper.yaml"
-    nanoplot: "./environment/osx/nanoplot.yaml"
+    nanoplot: "../environment/osx/nanoplot_v.1.36.yaml"
     minimap2: "../environment/osx/minimap2_v.2.26.yaml"
     samtools: "../environment/osx/samtools_v.1.17.yaml"
     bedtools: "../environment/osx/bedtools_v.2.31.yaml"
