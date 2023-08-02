@@ -14,7 +14,7 @@ fastq_screen:
 ###############################################################################
 ### CONSENSUS ###
 ####################
-consensus:
+consensus: 
   min_cov: # Minimum coverage, mask lower regions with "N" (default: "30") [INT]
   # Available options (not exhaustive), choose one:
     - '30'                         # 30 X : AFROSCREEN SARS-CoV-2 Illumina amplicons sequencing (default)
@@ -36,6 +36,19 @@ consensus:
     #- 'Human-herpesvirus-3_NC-001348-1'    # Varicella  (na)
     #- 'Add_your_favorite_genome_ref'       # Custom     (na)
   path: "resources/genomes/" # Path to genomes references (default)
+  model: #
+
+  # r941_min_high_g330
+  # r941_min_fast_g303
+  # r941_min_high_g303
+  # r941_min_high_g330
+  # r941_prom_fast_g303
+  # r941_prom_high_g303
+  # r941_prom_high_g330
+  # r10_min_high_g303
+  # r10_min_high_g340
+  # r941_prom_diploid_snp
+
 
 conda:
   frontend:
@@ -47,3 +60,4 @@ conda:
     samtools: "../environment/osx/samtools_v.1.17.yaml"
     bedtools: "../environment/osx/bedtools_v.2.31.yaml"
     gawk: "../environment/osx/gawk_v.5.1.yaml"
+    medaka: "../environment/osx/medaka_v.0.11.yaml"

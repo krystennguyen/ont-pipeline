@@ -37,6 +37,7 @@ MINIMAP2 = config["conda"]["osx"]["minimap2"]
 SAMTOOLS = config["conda"]["osx"]["samtools"]
 BEDTOOLS = config["conda"]["osx"]["bedtools"]
 GAWK = config["conda"]["osx"]["gawk"]
+MEDAKA = config["conda"]["osx"]["medaka"]
 
 
 ###############################################################################
@@ -53,9 +54,46 @@ MIN_COV = config["consensus"]["min_cov"]        # Minimum coverage, mask lower r
 #############
 rule all:
     input:
-        masked_ref = expand("results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
-        cov_stats = expand("results/03_Coverage/{reference}/{sample}_{min_cov}X_coverage-stats.tsv", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV)
-    
+        # masked_ref = expand("results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
+        # cov_stats = expand("results/03_Coverage/{reference}/{sample}_{min_cov}X_coverage-stats.tsv", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV)
+        consensus = expand("results/05_Consensus/{reference}/{sample}_consensus.hdf", sample = SAMPLE.sample, reference = REFERENCE)
+ ###############################################################################
+rule medaka_consensus:
+    # Aim: consensus sequence
+    # Use: medaka consensus -i [MAPPED.bam] -d [REFERENCE.fasta] -o [CONSENSUS.fasta]
+    message:
+        "Medaka consensus sequence for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
+    conda:
+        MEDAKA
+    params:
+        ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
+    input:
+        mapped = "results/02_Mapping/{reference}/{sample}_mark-dup.bam"
+    output:
+        consensus = "results/05_Consensus/{reference}/{sample}_consensus.hdf"
+    log:
+        "results/10_Reports/tools-log/medaka/{reference}/{sample}_consensus.log"
+    shell:
+        "medaka consensus " # Medaka consensus, tools for consensus sequence calling
+        # "--threads 2 "                  # Number of threads
+        "--debug "               # Debug mode
+        # "-d {params.ref} "   # Reference fasta file
+        "--check_output "        # Check output file
+        "{input.mapped} " # Mapped bam input
+        "{output.consensus} " # Consensus output
+        "> {log} 2>&1"                    # Log redirection
+###############################################################################
+# rule medaka_variant:
+#     # Aim: variant calling
+#     # Use: medaka variant [REFERENCE.fasta] [CONSENSUS.hdf] [OUTPUT.vcf]
+#     message:
+#         "Medaka variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
+#     conda:
+#         MEDAKA
+#     params:
+#         ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
+#     input:
+
 ###############################################################################
 rule bedtools_masking:
     # Aim: masking low coverage regions

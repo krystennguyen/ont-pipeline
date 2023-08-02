@@ -22,6 +22,7 @@ FASTQ = glob_wildcards("resources/reads/{fastq}.fastq.gz")
 
 # OS = config["os"]                  # Operating system
 CPUS = config["resources"]["cpus"] # Threads (maximum)
+# REFERENCE = config["consensus"]["reference"] # Reference genome
 
 ###############################################################################
 ### ENVIRONMENTS ###
@@ -45,6 +46,7 @@ rule nanoplot:
         NANOPLOT
     input:
         fastq = "resources/reads/{fastq}.fastq.gz"
+        # bam = "results/02_Mapping/{reference}/{fastq}_mark-dup.bam"
     output:
         stats = "results/00_Quality_Control/{fastq}/{fastq}_NanoStats.txt"
     log:
@@ -52,8 +54,9 @@ rule nanoplot:
     shell:
         "NanoPlot "
         "--fastq {input.fastq} "
+        # "--bam {input.bam} "
         "--threads {CPUS} "
         "--outdir results/00_Quality_Control/{wildcards.fastq}/ "
         "--prefix {wildcards.fastq}_ "
-        "2> {log}"
+        "&> {log}"
     

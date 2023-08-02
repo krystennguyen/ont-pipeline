@@ -1,15 +1,11 @@
 # Analysis pipeline for nanopore sequence data
-Input: resources/reads  ----- fastq.gz files of demultiplexed reads
-</br>
-Use:
-```
-snakemake --cores 8 -s workflow/snakefiles/pipeline.smk --use-conda  
-```
-
-Features:
+Input reads: resources/reads -- fastq.gz files of demultiplexed reads
+Features
 - Reads mapping
 - Genome coverage
 - Variant calling
 - Consensus sequences
 - Lineage reports
+
+
 

@@ -46,6 +46,3 @@ Thumbs.db
 /results
 /archives
 *.tar.gz
-
-# Ignore test scripts
-*.sh
