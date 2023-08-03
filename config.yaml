@@ -36,18 +36,24 @@ consensus:
     #- 'Human-herpesvirus-3_NC-001348-1'    # Varicella  (na)
     #- 'Add_your_favorite_genome_ref'       # Custom     (na)
   path: "resources/genomes/" # Path to genomes references (default)
-  model: #
+  model: # Your model, in the format {pore}_{device}_{caller variant}_{caller version}
+    # i) the pore type, ii) the sequencing device (MinION-min or PromethION-prom), iii) the basecaller variant, and iv) the basecaller version
+    # Available options (not exhaustive), choose one:
+    - "r941_min_fast_g303" # r941_min_fast_g303 (default)
+    #- 'r941_min_fast_g330'
+    #- 'r941_min_high_g303'
+    #- 'r941_min_high_g330'
+    #- 'r941_min_fast_g303'
+    #- 'r941_min_high_g303'
+    #- 'r941_min_high_g330'
+    #- 'r941_prom_fast_g303'
+    #- 'r941_prom_high_g303'
+    #- 'r941_prom_high_g330'
+    #- 'r10_min_high_g303'
+    #- 'r10_min_high_g340'
+    #- 'r941_prom_diploid_snp'
+    #- 'Add_your_model' # Custom
 
-  # r941_min_high_g330
-  # r941_min_fast_g303
-  # r941_min_high_g303
-  # r941_min_high_g330
-  # r941_prom_fast_g303
-  # r941_prom_high_g303
-  # r941_prom_high_g330
-  # r10_min_high_g303
-  # r10_min_high_g340
-  # r941_prom_diploid_snp
 
 
 conda:

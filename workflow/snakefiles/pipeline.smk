@@ -47,6 +47,7 @@ PRIMER = ("resources/primers/fasta/PCS111_primers.fas")  # Path to primer
 REF_PATH = config["consensus"]["path"]          # Path to genomes references
 REFERENCE = config["consensus"]["reference"]    # Genome reference sequence, in fasta format
 MIN_COV = config["consensus"]["min_cov"]        # Minimum coverage, mask lower regions with 'N' 
+MODEL = config["consensus"]["model"]            # Model for consensus sequence calling
 
 
 ###############################################################################
@@ -54,10 +55,33 @@ MIN_COV = config["consensus"]["min_cov"]        # Minimum coverage, mask lower r
 #############
 rule all:
     input:
-        # masked_ref = expand("results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
-        # cov_stats = expand("results/03_Coverage/{reference}/{sample}_{min_cov}X_coverage-stats.tsv", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV)
+        masked_ref = expand("results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
+        cov_stats = expand("results/03_Coverage/{reference}/{sample}_{min_cov}X_coverage-stats.tsv", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
         consensus = expand("results/05_Consensus/{reference}/{sample}_consensus.hdf", sample = SAMPLE.sample, reference = REFERENCE)
- ###############################################################################
+###############################################################################
+rule medaka_variant:
+    # Aim: variant calling
+    # Use: medaka variant [REFERENCE.fasta] [CONSENSUS.hdf] [OUTPUT.vcf]
+    message:
+        "Medaka variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
+    conda:
+        MEDAKA
+    params:
+        ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
+    input:
+        consensus = "results/05_Consensus/{reference}/{sample}_consensus.hdf"
+    output:
+        variant = "results/04_Variants/{reference}/{sample}_variant.vcf"
+    log:
+        "results/10_Reports/tools-log/medaka/{reference}/{sample}_variant.log"
+    shell:
+        "medaka variant " # Medaka variant, tools for variant calling
+        "--check_output "        # Check output file
+        "{params.ref} " # Reference fasta file
+        "{input.consensus} " # Consensus hdf input
+        "{output.variant} " # Variant output
+        "&> {log}"                    # Log redirection
+###############################################################################
 rule medaka_consensus:
     # Aim: consensus sequence
     # Use: medaka consensus -i [MAPPED.bam] -d [REFERENCE.fasta] -o [CONSENSUS.fasta]
@@ -66,7 +90,8 @@ rule medaka_consensus:
     conda:
         MEDAKA
     params:
-        ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
+        ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE),
+        model = MODEL
     input:
         mapped = "results/02_Mapping/{reference}/{sample}_mark-dup.bam"
     output:
@@ -76,24 +101,14 @@ rule medaka_consensus:
     shell:
         "medaka consensus " # Medaka consensus, tools for consensus sequence calling
         # "--threads 2 "                  # Number of threads
-        "--debug "               # Debug mode
         # "-d {params.ref} "   # Reference fasta file
-        "--check_output "        # Check output file
+        # "--check_output "        # Check output file
+        "--model {params.model} " # Model for consensus sequence calling
+        "--chunk_len 800 "     # Chunk length
+        "--chunk_ovlp 400 "        # Chunk overlap
         "{input.mapped} " # Mapped bam input
         "{output.consensus} " # Consensus output
-        "> {log} 2>&1"                    # Log redirection
-###############################################################################
-# rule medaka_variant:
-#     # Aim: variant calling
-#     # Use: medaka variant [REFERENCE.fasta] [CONSENSUS.hdf] [OUTPUT.vcf]
-#     message:
-#         "Medaka variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
-#     conda:
-#         MEDAKA
-#     params:
-#         ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
-#     input:
-
+        "&> {log}"                    # Log redirection
 ###############################################################################
 rule bedtools_masking:
     # Aim: masking low coverage regions
