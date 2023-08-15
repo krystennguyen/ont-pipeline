@@ -59,10 +59,11 @@ consensus:
 conda:
   frontend: 'mamba'
   osx:
-    pychopper: "../environment/osx/pychopper.yaml"
+    # pychopper: "../environment/osx/pychopper.yaml"
     nanoplot: "../environment/osx/nanoplot_v.1.36.yaml"
     minimap2: "../environment/osx/minimap2_v.2.26.yaml"
     samtools: "../environment/osx/samtools_v.1.17.yaml"
     bedtools: "../environment/osx/bedtools_v.2.31.yaml"
     gawk: "../environment/osx/gawk_v.5.1.yaml"
-    medaka: "../environment/osx/medaka_v.0.11.yaml"
+    # medaka: "../environment/osx/medaka_v.0.11.yaml"
+    nanopolish: "../environment/osx/nanopolish_v.0.13.2.yaml"

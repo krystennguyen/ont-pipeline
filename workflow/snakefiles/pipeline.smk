@@ -32,12 +32,13 @@ TMP_DIR = config["resources"]["tmp_dir"] # Temporary directory
 ### ENVIRONMENTS ###
 ####################
 
-PYCHOPPER = config["conda"]["osx"]["pychopper"] # Pychopper conda environment
+# PYCHOPPER = config["conda"]["osx"]["pychopper"] # Pychopper conda environment
 MINIMAP2 = config["conda"]["osx"]["minimap2"]
 SAMTOOLS = config["conda"]["osx"]["samtools"]
 BEDTOOLS = config["conda"]["osx"]["bedtools"]
 GAWK = config["conda"]["osx"]["gawk"]
-MEDAKA = config["conda"]["osx"]["medaka"]
+# MEDAKA = config["conda"]["osx"]["medaka"]
+NANOPOLISH = config["conda"]["osx"]["nanopolish"]
 
 
 ###############################################################################
@@ -57,59 +58,85 @@ rule all:
     input:
         masked_ref = expand("results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
         cov_stats = expand("results/03_Coverage/{reference}/{sample}_{min_cov}X_coverage-stats.tsv", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
-        consensus = expand("results/05_Consensus/{reference}/{sample}_consensus.hdf", sample = SAMPLE.sample, reference = REFERENCE)
+        consensus = expand("results/05_Consensus/{reference}/{sample}_{min_cov}X_consensus.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV)
 ###############################################################################
-rule medaka_variant:
-    # Aim: variant calling
-    # Use: medaka variant [REFERENCE.fasta] [CONSENSUS.hdf] [OUTPUT.vcf]
+rule nanopolish_variant:
+    # Aim: 
+    # Use: nanopolish variants [OPTIONS] --reads [READS.fasta] --bam [ALIGNMENTS.bam] --genome [REFERENCE.fasta]
     message:
-        "Medaka variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
-    conda:
-        MEDAKA
+        "Nanopolish variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference}, @{wildcards.min_cov}X)"
+    conda: 
+        NANOPOLISH
     params:
         ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
     input:
-        consensus = "results/05_Consensus/{reference}/{sample}_consensus.hdf"
+        reads = "results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta",
+        bam = "results/02_Mapping/{reference}/{sample}_mark-dup.bam"
     output:
-        variant = "results/04_Variants/{reference}/{sample}_variant.vcf"
+        consensus = "results/05_Consensus/{reference}/{sample}_{min_cov}X_consensus.fasta"
     log:
-        "results/10_Reports/tools-log/medaka/{reference}/{sample}_variant.log"
+        "results/10_Reports/tools-log/medaka/{reference}/{sample}_{min_cov}X_variant.log"
     shell:
-        "medaka variant " # Medaka variant, tools for variant calling
-        "--check_output "        # Check output file
-        "{params.ref} " # Reference fasta file
-        "{input.consensus} " # Consensus hdf input
-        "{output.variant} " # Variant output
-        "&> {log}"                    # Log redirection
-###############################################################################
-rule medaka_consensus:
-    # Aim: consensus sequence
-    # Use: medaka consensus -i [MAPPED.bam] -d [REFERENCE.fasta] -o [CONSENSUS.fasta]
-    message:
-        "Medaka consensus sequence for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
-    conda:
-        MEDAKA
-    params:
-        ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE),
-        model = MODEL
-    input:
-        mapped = "results/02_Mapping/{reference}/{sample}_mark-dup.bam"
-    output:
-        consensus = "results/05_Consensus/{reference}/{sample}_consensus.hdf"
-    log:
-        "results/10_Reports/tools-log/medaka/{reference}/{sample}_consensus.log"
-    shell:
-        "medaka consensus " # Medaka consensus, tools for consensus sequence calling
-        "--debug "
-        # "--threads 2 "                  # Number of threads
-        # "-d {params.ref} "   # Reference fasta file
-        # "--check_output "        # Check output file
-        "--model {params.model} " # Model for consensus sequence calling
-        "--chunk_len 800 "     # Chunk length
-        "--chunk_ovlp 400 "        # Chunk overlap
-        "{input.mapped} " # Mapped bam input
-        "{output.consensus} " # Consensus output
-        "&> {log}"                    # Log redirection
+        "nanopolish variant "
+        "--consensus "
+        "--reads {input.reads} "
+        "--bam {input.bam} "
+        "--genome {params.ref} "
+        "&> {log}"  
+    
+
+
+# rule medaka_variant:
+#     # Aim: variant calling
+#     # Use: medaka variant [REFERENCE.fasta] [CONSENSUS.hdf] [OUTPUT.vcf]
+#     message:
+#         "Medaka variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
+#     conda:
+#         MEDAKA
+#     params:
+#         ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
+#     input:
+#         consensus = "results/05_Consensus/{reference}/{sample}_consensus.hdf"
+#     output:
+#         variant = "results/04_Variants/{reference}/{sample}_variant.vcf"
+#     log:
+#         "results/10_Reports/tools-log/medaka/{reference}/{sample}_variant.log"
+#     shell:
+#         "medaka variant " # Medaka variant, tools for variant calling
+#         "--check_output "        # Check output file
+#         "{params.ref} " # Reference fasta file
+#         "{input.consensus} " # Consensus hdf input
+#         "{output.variant} " # Variant output
+#         "&> {log}"                    # Log redirection
+# ###############################################################################
+# rule medaka_consensus:
+#     # Aim: consensus sequence
+#     # Use: medaka consensus -i [MAPPED.bam] -d [REFERENCE.fasta] -o [CONSENSUS.fasta]
+#     message:
+#         "Medaka consensus sequence for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
+#     conda:
+#         MEDAKA
+#     params:
+#         ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE),
+#         model = MODEL
+#     input:
+#         mapped = "results/02_Mapping/{reference}/{sample}_mark-dup.bam"
+#     output:
+#         consensus = "results/05_Consensus/{reference}/{sample}_consensus.hdf"
+#     log:
+#         "results/10_Reports/tools-log/medaka/{reference}/{sample}_consensus.log"
+#     shell:
+#         "medaka consensus " # Medaka consensus, tools for consensus sequence calling
+#         "--debug "
+#         # "--threads 2 "                  # Number of threads
+#         # "-d {params.ref} "   # Reference fasta file
+#         # "--check_output "        # Check output file
+#         "--model {params.model} " # Model for consensus sequence calling
+#         "--chunk_len 800 "     # Chunk length
+#         "--chunk_ovlp 400 "        # Chunk overlap
+#         "{input.mapped} " # Mapped bam input
+#         "{output.consensus} " # Consensus output
+#         "&> {log}"                    # Log redirection
 
 
 ###############################################################################

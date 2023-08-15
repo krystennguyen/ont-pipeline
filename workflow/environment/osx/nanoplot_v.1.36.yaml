@@ -37,7 +37,7 @@ dependencies:
   - libcrc32c=1.1.2=he49afe7_0
   - libcurl=8.2.1=h5f667d7_0
   - libcxx=16.0.6=hd57cbcb_0
-  - libdeflate=1.18=hac1461d_0
+  # - libdeflate=1.18=hac1461d_0
   - libedit=3.1.20191231=h0678c8f_2
   - libev=4.33=haf1e3a3_1
   - libevent=2.1.12=ha90c15b_1

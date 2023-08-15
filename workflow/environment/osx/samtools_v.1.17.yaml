@@ -11,7 +11,7 @@ dependencies:
   - krb5=1.21.1=hb884880_0
   - libcurl=8.2.0=h5f667d7_0
   - libcxx=16.0.6=hd57cbcb_0
-  - libdeflate=1.18=hac1461d_0
+  # - libdeflate=1.18=hac1461d_0
   - libedit=3.1.20191231=h0678c8f_2
   - libev=4.33=haf1e3a3_1
   - libnghttp2=1.52.0=he2ab024_0
