@@ -57,7 +57,7 @@ else
     echo -e "
 Conda environment ${red}workflow-base_v.${workflow_base_version}${nc} will be now created!
 "
-    conda env create -f ${workdir}/workflow/environments/${os}/workflow-base_v.${workflow_base_version}.yaml
+    conda env create -f ${workdir}/workflow/environment/${os}/workflow-base_v.${workflow_base_version}.yaml
 fi
 
 
@@ -76,29 +76,29 @@ source ~/miniconda3/etc/profile.d/conda.sh 2> /dev/null          # local user
 source /usr/local/miniconda3/etc/profile.d/conda.sh 2> /dev/null # HPC server
 conda activate workflow-base_v.${workflow_base_version}          # conda activate workflow-base
 
-###############################################################################
-### SNAKEMAKE ACTIVATION ###
-########################
-echo -e "
-${green}------------------------------------------------------------------------${nc}
-${green}#####${nc} ${red}SNAKEMAKE ACTIVATION${nc} ${green}#####${nc}
-${green}----------------------------${nc}
-"
-# Test if snakemake environment exist
-if [[ $(conda info --envs | grep -o -E "^snakemake") ]]
-then
-    echo -e "
-Snakemake it's already created!
-"
-else
-    echo -e "
-Snakemake will be now created!
-"
-    conda env create -n snakemake
-fi
+# ###############################################################################
+# ### SNAKEMAKE ACTIVATION ###
+# ########################
+# echo -e "
+# ${green}------------------------------------------------------------------------${nc}
+# ${green}#####${nc} ${red}SNAKEMAKE ACTIVATION${nc} ${green}#####${nc}
+# ${green}----------------------------${nc}
+# "
+# # Test if snakemake environment exist
+# if [[ $(conda info --envs | grep -o -E "^snakemake") ]]
+# then
+#     echo -e "
+# Snakemake it's already created!
+# "
+# else
+#     echo -e "
+# Snakemake will be now created!
+# "
+#     conda env create -n snakemake
+# fi
 
-echo -e "conda activate snakemake"
-conda activate snakemake        # conda activate snakemake
+# echo -e "conda activate snakemake"
+# conda activate snakemake        # conda activate snakemake
 
 ###############################################################################
 ### SETTINGS ###
@@ -123,7 +123,8 @@ ${red}¡${nc} Please, add at least 1 sample in ${ylo}resources/reads/${nc} ${red
 fi
 
 config_file="${workdir}/config.yaml"       # Get configuration file
-conda_frontend=$(yq e '.conda.frontend' ${config_file} | sed 's/^- //' | sed 's/\[\"//' | sed 's/\"\]//') # Get user config: conda frontend
+# conda_frontend=$(yq e '.conda.frontend' ${config_file} | sed 's/^- //' | sed 's/\[\"//' | sed 's/\"\]//') # Get user config: conda frontend
+conda_frontend=$(yq -r '.conda.frontend' ${config_file})
 max_threads=$(yq -r '.resources.cpus' ${config_file})    # Get user config: max threads
 
 

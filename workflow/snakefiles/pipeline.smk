@@ -100,6 +100,7 @@ rule medaka_consensus:
         "results/10_Reports/tools-log/medaka/{reference}/{sample}_consensus.log"
     shell:
         "medaka consensus " # Medaka consensus, tools for consensus sequence calling
+        "--debug "
         # "--threads 2 "                  # Number of threads
         # "-d {params.ref} "   # Reference fasta file
         # "--check_output "        # Check output file
@@ -109,6 +110,8 @@ rule medaka_consensus:
         "{input.mapped} " # Mapped bam input
         "{output.consensus} " # Consensus output
         "&> {log}"                    # Log redirection
+
+
 ###############################################################################
 rule bedtools_masking:
     # Aim: masking low coverage regions

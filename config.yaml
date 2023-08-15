@@ -57,8 +57,7 @@ consensus:
 
 
 conda:
-  frontend:
-    - mamba
+  frontend: 'mamba'
   osx:
     pychopper: "../environment/osx/pychopper.yaml"
     nanoplot: "../environment/osx/nanoplot_v.1.36.yaml"
