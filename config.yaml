@@ -36,6 +36,7 @@ consensus:
     #- 'Human-herpesvirus-3_NC-001348-1'    # Varicella  (na)
     #- 'Add_your_favorite_genome_ref'       # Custom     (na)
   path: "resources/genomes/" # Path to genomes references (default)
+  
   model: # Your model, in the format {pore}_{device}_{caller variant}_{caller version}
     # i) the pore type, ii) the sequencing device (MinION-min or PromethION-prom), iii) the basecaller variant, and iv) the basecaller version
     # Available options (not exhaustive), choose one:

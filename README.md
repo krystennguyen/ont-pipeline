@@ -1,8 +1,11 @@
 # Analysis pipeline for nanopore sequence data
 Input:
-~/resources/reads -- fastq.gz files of basecalled, demultiplexed reads
-~/resources/primers -- primer bed/bedpe/fasta files
-~/resources/genomes -- reference genome fasta files
+</br>
+~/resources/reads -- fastq.gz files of basecalled, demultiplexed reads </br>
+~/resources/signal_data -- raw Nanopore signal data fast5 files (Nanopolish workflow)
+~/resources/primers -- primer bed/bedpe/fasta files </br>
+~/resources/genomes -- reference genome fasta files </br>
+
 
 Ouput: ~/results
 </br>
@@ -17,9 +20,13 @@ Features:
 - Quality control with NanoPlot
 - Reads mapping with Minimap2
 - Genome coverage with Samtools and Bedtools
-- Variant calling with Nanopolish (TODO)
-- Consensus sequences Nanopolish (TODO)
+- Variant calling (TODO)
+- Consensus sequences(TODO)
 - Lineage reports (TODO)
+
+Bugs to fix:
+- Medaka illegal hardware instructions
+- 
 
 
 

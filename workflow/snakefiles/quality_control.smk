@@ -1,4 +1,4 @@
-
+# TODO
 # Run ____________________ snakemake -s quality_control.smk --use-conda 
 
 ###############################################################################
@@ -20,7 +20,7 @@ FASTQ = glob_wildcards("resources/reads/{fastq}.fastq.gz")
 ### RESOURCES ###
 #################
 
-# OS = config["os"]                  # Operating system
+OS = config["os"]                  # Operating system
 CPUS = config["resources"]["cpus"] # Threads (maximum)
 # REFERENCE = config["consensus"]["reference"] # Reference genome
 
@@ -28,7 +28,7 @@ CPUS = config["resources"]["cpus"] # Threads (maximum)
 ### ENVIRONMENTS ###
 ####################
 
-NANOPLOT = config["conda"]["osx"]["nanoplot"]         # NanoPlot conda env
+NANOPLOT = config["conda"][OS]["nanoplot"]         # NanoPlot conda env
 
 
 ###############################################################################
@@ -46,7 +46,6 @@ rule nanoplot:
         NANOPLOT
     input:
         fastq = "resources/reads/{fastq}.fastq.gz"
-        # bam = "results/02_Mapping/{reference}/{fastq}_mark-dup.bam"
     output:
         stats = "results/00_Quality_Control/{fastq}/{fastq}_NanoStats.txt"
     log:
@@ -54,7 +53,6 @@ rule nanoplot:
     shell:
         "NanoPlot "
         "--fastq {input.fastq} "
-        # "--bam {input.bam} "
         "--threads {CPUS} "
         "--outdir results/00_Quality_Control/{wildcards.fastq}/ "
         "--prefix {wildcards.fastq}_ "

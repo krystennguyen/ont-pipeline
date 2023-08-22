@@ -38,14 +38,27 @@ echo -e "${blue}Operating system${nc} _______ ${red}${os}${nc}"
 shell=$SHELL
 echo -e "${blue}Shell${nc} __________________ ${ylo}${shell}${nc}"
 
+
+
+
+
 ###############################################################################
 ### WORKFLOW-BASE INSTALLATION ###
 ##################################
+
+# Delete previous session
+find results -type f -delete
+find resources/reads -name "*.index" -delete
+find resources/reads -name "*.index.fai" -delete
+find resources/reads -name "*.index.gzi" -delete
+find resources/reads -name "*.index.readdb" -delete
+
 echo -e "
 ${green}------------------------------------------------------------------------${nc}
 ${green}#####${nc} ${red}WORKFLOW-BASE INSTALLATION${nc} ${green}#####${nc}
 ${green}---------------------------------------${nc}
 "
+
 
 # Test if latest 'workflow-base' environment exist
 if [[ $(conda info --envs | grep -o -E "^workflow-base_v.${workflow_base_version}") ]]
@@ -130,12 +143,7 @@ max_threads=$(yq -r '.resources.cpus' ${config_file})    # Get user config: max 
 
 
 
-# #delete prev session
 
-# rm -rf results/02_Mapping/SARS-CoV-2s_Wuhan_MN-908947-3 results/03_Coverage/SARS-CoV-2_Wuhan_MN-908947-3 results/04_Variants/SARS-CoV-2_Wuhan_MN-908947-3 results/10_Reports/tools-log results/00_Quality_Control results/00_Quality_Control/FAQ90656_pass_barcode96_a8c21389_0
-
-# snakemake --cores 8 -s workflow/snakefiles/pipeline.smk --use-conda  #SIMPLE COMMANE
-# snakemake --cores 8 -s workflow/snakefiles/quality_control.smk --use-conda  #QC
 
 ##############################################################################
 ## SNAKEMAKE PIPELINES ###

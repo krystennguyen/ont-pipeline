@@ -58,34 +58,62 @@ rule all:
     input:
         masked_ref = expand("results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
         cov_stats = expand("results/03_Coverage/{reference}/{sample}_{min_cov}X_coverage-stats.tsv", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
-        consensus = expand("results/05_Consensus/{reference}/{sample}_{min_cov}X_consensus.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV)
+        # consensus = expand("results/05_Consensus/{reference}/{sample}_consensus.fasta", sample = SAMPLE.sample, reference = REFERENCE, min_cov = MIN_COV),
+        indexed = expand("resources/reads/{sample}.fastq.gz.index", sample = SAMPLE.sample),
+        variant = expand("results/05_Consensus/{reference}/{sample}_variant.vcf", sample = SAMPLE.sample, reference = REFERENCE)
+        # log =  expand("results/10_Reports/tools-log/nanopolish/{reference}/{sample}_variant.log", sample = SAMPLE.sample, reference = REFERENCE)
 ###############################################################################
 rule nanopolish_variant:
     # Aim: 
     # Use: nanopolish variants [OPTIONS] --reads [READS.fasta] --bam [ALIGNMENTS.bam] --genome [REFERENCE.fasta]
     message:
-        "Nanopolish variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference}, @{wildcards.min_cov}X)"
+        "Nanopolish variant calling for [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
     conda: 
         NANOPOLISH
     params:
         ref = expand("{ref_path}{reference}.fasta", ref_path = REF_PATH, reference = REFERENCE)
     input:
-        reads = "results/04_Variants/{reference}/{sample}_{min_cov}X_masked-ref.fasta",
+        reads = "resources/reads/{sample}.fastq.gz",
         bam = "results/02_Mapping/{reference}/{sample}_mark-dup.bam"
     output:
-        consensus = "results/05_Consensus/{reference}/{sample}_{min_cov}X_consensus.fasta"
+        # consensus = "results/05_Consensus/{reference}/{sample}_consensus.fasta",
+        variant = "results/05_Consensus/{reference}/{sample}_variant.vcf"
     log:
-        "results/10_Reports/tools-log/medaka/{reference}/{sample}_{min_cov}X_variant.log"
+        "results/10_Reports/tools-log/nanopolish/{reference}/{sample}_variant.log"
     shell:
-        "nanopolish variant "
-        "--consensus "
-        "--reads {input.reads} "
-        "--bam {input.bam} "
-        "--genome {params.ref} "
-        "&> {log}"  
-    
+        "nanopolish variants "
+        # "--consensus {output.consensus} "    
+        "--ploidy 1 "               # Ploidy leveel of the sequenced genome     
+        "-o {output.variant} "      # Write result to vcf output
+        "--reads {input.reads} "    # Reads input
+        "--bam {input.bam} "        # Bam input
+        "--genome {params.ref} "    # Reference fasta file
+        "&> {log}"                  # Log redirection
+###############################################################################
+rule nanopolish_index:
+    # Aim: Index the output of the basecaller
+    # Use: nanopolish index [OPTIONS] -d nanopore_raw_file_directory reads.fastq
+    message:
+        "Nanopolish indexing the raw Nanopore signal data for [[ {wildcards.sample} ]] sample"
+    conda:
+        NANOPOLISH
+    input:
+        directory = "resources/signal_data",
+        basecalled_reads = "resources/reads/{sample}.fastq.gz",
+        summary = "resources/seq_summary/sequencing_summary.txt"
+    output:
+        indexed = "resources/reads/{sample}.fastq.gz.index"
+    log:
+        "results/10_Reports/tools-log/nanopolish/{sample}_index.log"
+    shell:
+        "nanopolish index "         # Index the output of the basecaller
+        "-d {input.directory} "     # Nanopore raw file directory
+        "-s {input.summary} "       # Summary sequence file
+        "{input.basecalled_reads} "  # Basecalled fastq
+        "> {output.indexed} "       # Output
+        "&> {log}"              # Log redirection
 
-
+###############################################################################
 # rule medaka_variant:
 #     # Aim: variant calling
 #     # Use: medaka variant [REFERENCE.fasta] [CONSENSUS.hdf] [OUTPUT.vcf]
@@ -208,7 +236,7 @@ rule awk_coverage_statistics:
     # Aim: computing genomme coverage stats
     # Use: awk {FORMULA} END {{print [RESULTS.tsv] [BEDGRAPH.bed]
     message:
-        "Awk compute genome coverage statistics BED [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
+        "Awk compute genome coverage statistics [[ {wildcards.sample} ]] sample (for {wildcards.reference})"
     conda:
         GAWK
     input:
